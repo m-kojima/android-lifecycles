@@ -16,14 +16,16 @@
 
 package com.example.android.lifecycles.step3_solution;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.widget.TextView;
-
+import android.app.Activity;
 import android.arch.lifecycle.LifecycleActivity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import com.example.android.codelabs.lifecycle.R;
 
 public class ChronoActivity3 extends LifecycleActivity {
@@ -37,6 +39,16 @@ public class ChronoActivity3 extends LifecycleActivity {
         setContentView(R.layout.chrono_activity_3);
 
         mLiveDataTimerViewModel = ViewModelProviders.of(this).get(LiveDataTimerViewModel.class);
+        Log.d("ViewModel - hash", Integer.valueOf(mLiveDataTimerViewModel.hashCode()).toString());
+
+        final Activity activity = this;
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, ChronoActivity3.class);
+                activity.startActivity(intent);
+            }
+        });
 
         subscribe();
     }
@@ -52,6 +64,9 @@ public class ChronoActivity3 extends LifecycleActivity {
             }
         };
 
-        mLiveDataTimerViewModel.getElapsedTime().observe(this, elapsedTimeObserver);
+        if (!mLiveDataTimerViewModel.getElapsedTime().hasObservers()) {
+            mLiveDataTimerViewModel.getElapsedTime().observe(this, elapsedTimeObserver);
+        }
+        Log.d("ChronoActivity3", mLiveDataTimerViewModel.getElapsedTime().toString());
     }
 }
